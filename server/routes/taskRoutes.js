@@ -5,8 +5,11 @@ const router = new express.Router();
 // Route to create a new task
 router.post("/", async (req, res) => {
   try {
-    const { title, description, completed } = req.body;
-    const task = new Task({ title, description, completed });
+    const { userId, title, description, completed } = req.body;
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+    const task = new Task({ userId, title, description, completed });
     await task.save();
     res.status(201).send(task);
   } catch (error) {
@@ -14,17 +17,23 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Route to get all tasks
+// Route to get all tasks for a specific user
 router.get("/", async (req, res) => {
   try {
-    const tasks = await Task.find();
+    const { userId } = req.query;
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ message: "userId query parameter is required" });
+    }
+    const tasks = await Task.find({ userId });
     res.status(200).send(tasks);
   } catch (error) {
     res.status(500).json({ message: "Error getting tasks", error });
   }
 });
 
-// Get a task by id
+// Get a specific task by task ID
 router.get("/:id", async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -37,7 +46,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Update a task by id
+// Update a task by task ID
 router.put("/:id", async (req, res) => {
   try {
     const { title, description, completed } = req.body;
@@ -55,7 +64,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete a task by ID
+// Delete a task by task ID
 router.delete("/:id", async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);

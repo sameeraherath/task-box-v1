@@ -2,16 +2,22 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
-
+const passport = require("./config/passport");
+const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
+const authMiddleware = require("./middleware/auth");
 
 const app = express();
 const PORT = process.env.PORT || 5002;
 
 app.use(cors());
 app.use(express.json());
+app.use(passport.initialize());
 
-app.use("/tasks", taskRoutes);
+// Routes for authentication
+app.use("/auth", authRoutes);
+// secure Task Routes
+app.use("/tasks", authMiddleware, taskRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI, {})
