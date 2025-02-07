@@ -1,22 +1,40 @@
 import { useState, useEffect } from "react";
+import { SquareArrowOutUpLeft } from "lucide-react";
 import axios from "axios";
 import TaskList from "./components/TaskList";
 import TaskForm from "./components/TaskForm";
+import Login from "./components/Login";
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [tasks, setTasks] = useState([]);
 
-  // Fetch all tasks from the server
+  // Handle successful login
+  const handleLoginSuccess = (tokenId) => {
+    console.log("Token Received: ", tokenId);
+    setIsAuthenticated(true);
+  };
+
+  // Handle logout to reset the authentication status
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setTasks([]); // Clear tasks when logged out
+  };
+
+  // Fetch tasks only if the user is authenticated
   useEffect(() => {
-    axios
-      .get("http://localhost:5002/tasks")
-      .then((response) => {
-        setTasks(response.data);
-      })
-      .catch((error) => {
-        console.log("Error fetching tasks", error);
-      });
-  }, []);
+    if (isAuthenticated) {
+      axios
+        .get("http://localhost:5002/tasks")
+        .then((response) => {
+          setTasks(response.data);
+        })
+        .catch((error) => {
+          console.log("Error fetching tasks", error);
+        });
+    }
+  }, [isAuthenticated]);
+
   // Add a new task
   const addTask = (newTask) => {
     axios
@@ -41,7 +59,7 @@ function App() {
       });
   };
 
-  // Mark task as completed (Placeholder function)
+  // Mark task as completed
   const toggleTaskCompletion = (id) => {
     const task = tasks.find((t) => t._id === id);
     axios
@@ -59,13 +77,28 @@ function App() {
 
   return (
     <div className="app max-w-lg mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-8 mt-8">TaskBox</h1>
-      <TaskForm addTask={addTask} />
-      <TaskList
-        tasks={tasks}
-        deleteTask={deleteTask}
-        toggleTaskCompletion={toggleTaskCompletion}
-      />
+      {/* Conditional rendering based on login state */}
+      {!isAuthenticated ? (
+        <Login onLoginSuccess={handleLoginSuccess} />
+      ) : (
+        <>
+          {/* Logout button */}
+          <button
+            onClick={handleLogout}
+            className=" text-gray-200 p-4 rounded mb-4 block"
+          >
+            <SquareArrowOutUpLeft />
+          </button>
+
+          {/* Task Management Components */}
+          <TaskForm addTask={addTask} />
+          <TaskList
+            tasks={tasks}
+            deleteTask={deleteTask}
+            toggleTaskCompletion={toggleTaskCompletion}
+          />
+        </>
+      )}
     </div>
   );
 }
