@@ -4,18 +4,22 @@ const passport = require("passport");
 const router = express.Router();
 
 router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/auth/failure",
-  }),
+  passport.authenticate("google", { failureRedirect: "/auth/failure" }),
   (req, res) => {
-    res.json(req.user); // Returns authenticated user and token
+    // Set the JWT token in an HttpOnly cookie
+    res.cookie("authToken", req.user.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 3600000,
+    });
+    res.json({ user: req.user.user });
   }
 );
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("authToken");
+  res.status(200).send("Logged out");
+});
 
 module.exports = router;

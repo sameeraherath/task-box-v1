@@ -3,15 +3,13 @@ const User = require("../models/User");
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.header("Authorization")?.replace("Bearer ", "");
+    const token = req.cookies.authToken;
 
     if (!token) {
-      // If no token, return an unauthorized response
       return res.status(401).json({ message: "Authorization token missing" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     // Find the user associated with the decoded token
     const user = await User.findById(decoded.id);
 
