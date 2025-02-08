@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
+import { process } from "react-scripts";
 import { SquareArrowOutUpLeft } from "lucide-react";
 import axios from "axios";
 import TaskList from "./components/TaskList";
 import TaskForm from "./components/TaskForm";
 import Login from "./components/Login";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,7 +28,7 @@ function App() {
   useEffect(() => {
     if (isAuthenticated) {
       axios
-        .get("http://localhost:5002/tasks")
+        .get(`${API_URL}/tasks`)
         .then((response) => {
           setTasks(response.data);
         })
@@ -38,7 +41,7 @@ function App() {
   // Add a new task
   const addTask = (newTask) => {
     axios
-      .post("http://localhost:5002/tasks", newTask)
+      .post(`${API_URL}/tasks`, newTask)
       .then((response) => {
         setTasks([...tasks, response.data]);
       })
@@ -50,7 +53,7 @@ function App() {
   // Delete a task
   const deleteTask = (id) => {
     axios
-      .delete(`http://localhost:5002/tasks/${id}`)
+      .delete(`${API_URL}/tasks/${id}`)
       .then(() => {
         setTasks(tasks.filter((task) => task._id !== id));
       })
@@ -63,7 +66,7 @@ function App() {
   const toggleTaskCompletion = (id) => {
     const task = tasks.find((t) => t._id === id);
     axios
-      .put(`http://localhost:5002/tasks/${id}`, {
+      .put(`${API_URL}/tasks/${id}`, {
         ...task,
         completed: !task.completed,
       })
