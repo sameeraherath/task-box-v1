@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { process } from "react-scripts";
 import { SquareArrowOutUpLeft } from "lucide-react";
 import axios from "axios";
 import TaskList from "./components/TaskList";
 import TaskForm from "./components/TaskForm";
 import Login from "./components/Login";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
