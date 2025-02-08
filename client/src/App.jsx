@@ -7,20 +7,28 @@ import Login from "./components/Login";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+axios.defaults.withCredentials = true;
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [tasks, setTasks] = useState([]);
 
   // Handle successful login
-  const handleLoginSuccess = (tokenId) => {
-    console.log("Token Received: ", tokenId);
+  const handleLoginSuccess = () => {
     setIsAuthenticated(true);
   };
 
   // Handle logout to reset the authentication status
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    setTasks([]); // Clear tasks when logged out
+    axios
+      .post(`${API_URL}/logout`)
+      .then(() => {
+        setIsAuthenticated(false);
+        setTasks([]);
+      })
+      .catch((error) => {
+        console.error("Error during logout:", error);
+      });
   };
 
   // Fetch tasks only if the user is authenticated
