@@ -11,6 +11,7 @@ router.get(
     res.cookie("authToken", req.user.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       maxAge: 3600000,
     });
     res.json({ user: req.user.user });

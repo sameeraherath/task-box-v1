@@ -1,10 +1,7 @@
 const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-require("./googleStrategy");
-
-// Configure Google OAuth strategy for user authentication
 
 passport.use(
   new GoogleStrategy(
@@ -17,7 +14,6 @@ passport.use(
       try {
         let user = await User.findOne({ googleId: profile.id });
 
-        // If user is not found, create a new user
         if (!user) {
           user = await User.create({
             googleId: profile.id,
@@ -26,13 +22,10 @@ passport.use(
           });
         }
 
-        // Generate a JWT token for authenticated user
-
+        // Generate a JWT token for the authenticated user
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
           expiresIn: "1h",
-        }); // Token expiration time
-
-        // Return the user and token
+        });
 
         return done(null, { user, token });
       } catch (error) {
@@ -41,5 +34,3 @@ passport.use(
     }
   )
 );
-
-module.exports = passport; // Export the configured passport instance
