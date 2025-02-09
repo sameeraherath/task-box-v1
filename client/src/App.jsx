@@ -31,6 +31,14 @@ function App() {
       });
   };
 
+  // Check authentication status when the component mounts
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/auth/check`)
+      .then(() => setIsAuthenticated(true))
+      .catch(() => setIsAuthenticated(false));
+  }, []);
+
   // Fetch tasks only if the user is authenticated
   useEffect(() => {
     if (isAuthenticated) {
