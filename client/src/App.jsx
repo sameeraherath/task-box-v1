@@ -45,10 +45,16 @@ function App() {
       axios
         .get(`${API_URL}/tasks`)
         .then((response) => {
-          setTasks(response.data);
+          if (Array.isArray(response.data)) {
+            setTasks(response.data);
+          } else {
+            console.error("Unexpected response format, expected an array.");
+            setTasks([]); // Reset tasks to an empty array as a fallback
+          }
         })
         .catch((error) => {
           console.log("Error fetching tasks", error);
+          setTasks([]);
         });
     }
   }, [isAuthenticated]);
