@@ -3,18 +3,16 @@ import { GoogleLogin } from "@react-oauth/google";
 import PropTypes from "prop-types";
 
 function Login({ onLoginSuccess }) {
-  //  Handle successful login and pass the credential to the parent component
   const handleLoginSuccess = (CredentialResponse) => {
-    console.log("Google Credential Response: ", CredentialResponse); // Log the full response for debugging
+    console.log("Google Credential Response: ", CredentialResponse);
     const credential = CredentialResponse?.credential;
     if (credential) {
-      onLoginSuccess(credential); // Pass credential if it exists
+      onLoginSuccess(credential);
     } else {
       console.error("Credential not found in the response");
     }
   };
 
-  //  Handle failed login
   const handleLoginError = (error) => {
     console.log("Login Failed", error);
   };
@@ -29,10 +27,9 @@ function Login({ onLoginSuccess }) {
           <p className="text-gray-400 p-4 text-center">
             Log in to get started on your tasks.
           </p>
-          {/* Google Login Button */}
           <GoogleLogin
-            onSuccess={handleLoginSuccess} // Triggered on successful login
-            onError={handleLoginError} // Triggered when login fails
+            onSuccess={handleLoginSuccess}
+            onError={handleLoginError}
           />
         </div>
       </div>
