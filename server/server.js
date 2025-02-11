@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 5002;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5173", // Ensure this matches your client URL
     credentials: true,
   })
 );
@@ -22,7 +22,7 @@ app.use(passport.initialize());
 
 // Routes for authentication
 app.use("/auth", authRoutes);
-// secure Task Routes
+// Secure Task Routes
 app.use("/tasks", authMiddleware, taskRoutes);
 
 mongoose
