@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 5002;
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Ensure this matches your client URL
+    origin: "https://task-box-v1-client.vercel.app",
     credentials: true,
   })
 );
