@@ -11,13 +11,19 @@ function App() {
 
   const handleLoginSuccess = async (credential) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/google`, {
-        credential,
-      });
+      const response = await axios.post(
+        `${API_URL}/auth/google`,
+        {
+          credential,
+        },
+        { withCredentials: true }
+      );
       if (response.data.success) {
         setIsAuthenticated(true);
         // Fetch tasks or perform other actions after successful login
-        const tasksResponse = await axios.get(`${API_URL}/tasks`);
+        const tasksResponse = await axios.get(`${API_URL}/tasks`, {
+          withCredentials: true,
+        });
         setTasks(tasksResponse.data);
       } else {
         console.error("Login failed on the server");
